@@ -1,55 +1,99 @@
 <html>
 <head>
-<title>SubSonic Setup</title>
-<style>
-body {
-  font-family:helvetica, arial, sans-serif;
-  font-size:80%;
-  margin:10px;
-}
+	<title>SubSonic</title>
+	<script src="Ajax.js" type="text/javascript" charset="utf-8"></script>
+	<script src="Subsonic.js" type="text/javascript" charset="utf-8"></script>
+	<style>
+	body {
+	  font-family:helvetica, arial, sans-serif;
+	  font-size:80%;
+	  margin:10px;
+	  background-color: #eee;
+	}
 
-</style>
-<script>
-	var domain = localStorage['domain'] || '';
-	function init() {
-		if ( domain === '' ) {
-			var img = document.createElement( 'img' );
-			var p = document.createElement( 'p' );	
-			var inp = document.createElement( 'input' );
-			var btn = document.createElement( 'input' );
-			var txt = document.createTextNode( 'Domain: ' );
+	div {
+		display: none;
+		position: absolute;
+		left: 35%;
+		top: 30%;
+		background-color: white;
+		border: 1px solid black;
+		padding: 10px;
+		text-align: center;
+		width: 30%;
+	}
 
-			img.src = "icon_128.png";
-			inp.id = "uname";
-			inp.type = "text";
-			btn.type = "button"
-			btn.value = "Save"
+	table {
+		margin-left: auto;
+		margin-right: auto;
+	}
 
-			btn.onclick = function() {
-				var name = document.getElementById( 'uname' ).value;
-				if ( name !== '' ) {
-					var ans = confirm( "Are you sure you want to set your domain to: " + name );
-					if ( ans ) {
-						localStorage['domain'] = name;
-						window.location = domain;
-					}
-				}
+	</style>
+	<script type="text/javascript" charset="utf-8">
+
+		var show_elem = function( id ) {
+			document.getElementById( id ).style.display = "block";
+		}
+
+		var hide_elem = function( id ) {
+			document.getElementById( id ).style.display = "none";
+		}
+
+		var init = function () {
+
+			document.getElementById( 'save_server' ).onclick = function() {
+				var serverObj = {};
+
+				serverObj.server = document.getElementById( 'server' ).value;
+				serverObj.username = document.getElementById( 'username' ).value;
+				serverObj.password = document.getElementById( 'password' ).value;
+				serverObj.save = document.getElementById( 'save').checked;
+
+				Subsonic.testServer( serverObj );
 			}
 
-			p.appendChild( img );
-			p.appendChild( document.createElement( 'br' ) );
-			p.appendChild( txt );
-			p.appendChild( inp );
-			p.appendChild( btn );
-			document.getElementById( 'box' ).appendChild( p );
-		} else {
-			window.location = domain;
-		}
-	};
+			var servers = Subsonic.listServers();
 
-</script>
+			if ( servers.length === 0 ) {
+				show_elem( 'add_servers' );
+				// show_elem( 'servers' );
+				return;
+			}
+
+			// list the servers;
+		}
+	</script>
 </head>
-<body onload="init();">
-	<div id="box"></div>
+<body onload="init()">
+	<center><img src="icon_128.png" /></center>
+	<div id="servers">
+		server 1<br/>
+		server 2<br/>
+		server 3<br/>
+		server 4<br/>
+		server 5<br/>
+		server 6<br/>
+	</div>
+	<div id="add_servers">
+		<table> 
+			<tr>
+				<td>Server Name:</td><td><input id="server" type="text" name="server" value=""></td><td></td>
+			</tr>
+			<tr>
+				<td>Username:</td><td><input id="username" type="text" name="username" value=""></td><td></td>
+			</tr>
+			<tr>
+				<td>Password:</td><td><input id="password" type="password" name="password" value=""></td><td></td>
+			</tr>
+			<tr>
+				<td>Save Password:</td><td><input id="save" type="checkbox" name="savepasswd" value=""></td><td></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td></td>
+				<td><input id="save_server" type="button" name="save" value="Save"></td>
+			</tr>
+		</table>
+	</div>
 </body>
 </html>
