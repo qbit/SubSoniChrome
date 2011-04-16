@@ -1,0 +1,51 @@
+<html>
+<head>
+<title>SubSonic Options</title>
+<style>
+body {
+  font-family:helvetica, arial, sans-serif;
+  font-size:80%;
+  margin:10px;
+}
+
+</style>
+<script>
+	var user = localStorage['domain'] || '';
+	console.log( user );
+	function init() {
+		var p = document.createElement( 'p' );	
+		var inp = document.createElement( 'input' );
+		var btn = document.createElement( 'input' );
+		var txt = document.createTextNode( 'Domain: ' );
+
+		inp.id = "uname";
+		inp.type = "text";
+		inp.value = user;
+		btn.type = "button"
+		btn.value = "Save"
+
+		btn.onclick = function() {
+			var name = document.getElementById( 'uname' ).value;
+			if ( name !== '' ) {
+				var ans = confirm( "Are you sure you want to set your domain to: " + name );
+				if ( ans ) {
+					localStorage['domain'] = name;
+					alert( "New Domain saved!" );
+				}
+			}
+		}
+
+		p.appendChild( txt );
+		p.appendChild( inp );
+		p.appendChild( btn );
+		document.getElementById( 'box' ).appendChild( p );
+	};
+
+</script>
+</head>
+<body onload="init();">
+	<img src="icon_128.png" />
+	<hr>
+	<div id="box"></div>
+</body>
+</html>
