@@ -54,9 +54,9 @@ var Ajax = {
 					if (A.status === 200) {
 						if ( A.responseXML ) {
 
-							var xml = A.responseXML;
+							var json = A.responseXML;
 							
-							var obj = eval( ''+Ajax.module_name+'.gets()' );
+							console.log( json );
 							/*
 							 * fun little session in getting multiple xpath stuff.
 							 * it's too dificult to display multiple results 
@@ -86,10 +86,6 @@ var Ajax = {
 							}
 							*/
 
-							var CountSet = xml.evaluate( obj[0], xml, null, XPathResult.ANY_TYPE, null );
-
-							var CountNode = CountSet.iterateNext( );
-
 							if ( CountNode ) {
 								Ajax.onSuccess( on_complete, CountNode.textContent );
 							} else {
@@ -104,7 +100,7 @@ var Ajax = {
 				}
 			};
 
-			A.open("GET", this.service_url, true);
+			A.open("POST", this.service_url, true);
 
 			A.send();
 		} catch( e ) {
