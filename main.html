@@ -1,7 +1,8 @@
 <html>
 <head>
 	<title>SubSonic</title>
-	<script src="Ajax.js" type="text/javascript" charset="utf-8"></script>
+	<script src="lib/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="lib/json2.js" type="text/javascript" charset="utf-8"></script>
 	<script src="Subsonic.js" type="text/javascript" charset="utf-8"></script>
 	<style>
 	body {
@@ -11,7 +12,20 @@
 	  background-color: #eee;
 	}
 
-	div {
+	#notification {
+		display: none;
+		position: absolute;
+		width: 30%;
+		height: 30px;
+		left: 35%;
+		top: 0px;
+		font-size: 20px;
+		text-align: center;
+		-webkit-border-bottom-right-radius: 5px;
+		-webkit-border-bottom-left-radius: 5px;
+	}
+
+	#servers,#add_server {
 		display: none;
 		position: absolute;
 		left: 35%;
@@ -31,50 +45,81 @@
 	</style>
 	<script type="text/javascript" charset="utf-8">
 
-		var show_elem = function( id ) {
-			document.getElementById( id ).style.display = "block";
+		var debug = true;
+
+		function log( msg ) {
+			if ( debug ) {
+				console.log( msg );
+			}
 		}
 
-		var hide_elem = function( id ) {
-			document.getElementById( id ).style.display = "none";
+		Subsonic.debug = debug;
+
+		if ( debug ) {
+			// delete localStorage.servers;
 		}
 
-		var init = function () {
+		$(document).ready( function() {
 
-			document.getElementById( 'save_server' ).onclick = function() {
+			$('#save_server' ).click( function() {
 				var serverObj = {};
 
-				serverObj.server = document.getElementById( 'server' ).value;
-				serverObj.username = document.getElementById( 'username' ).value;
-				serverObj.password = document.getElementById( 'password' ).value;
-				serverObj.save = document.getElementById( 'save').checked;
+				serverObj.server = $( '#server' ).val();
+				serverObj.username = $( '#username' ).val();
+				serverObj.password = $( '#password' ).val();
 
-				Subsonic.testServer( serverObj );
-			}
+
+				if ( $('#save:checked' ).val() === undefined  ) {
+					serverObj.save = false;
+				} else {
+					serverObj.save = true;
+				}
+
+				Subsonic.saveServer( serverObj );
+			});
 
 			var servers = Subsonic.listServers();
 
 			if ( servers.length === 0 ) {
-				show_elem( 'add_servers' );
-				// show_elem( 'servers' );
-				return;
-			}
+				// ask for a new server
+				$('#add_server').show( 'fast' );
+			} else if ( servers.length === 1 )  {
+				// load only server
+				Subsonic.loadServer( servers[0] );
+			} else {
+				for ( var server in servers ) {
+					// check for default server
+					if ( server.isDefault ) {
+						Subsonic.loadServer( server );
+					}
+				}
 
-			// list the servers;
-		}
+				if ( ! Subsonic.serverLoaded ) {
+					$('#servers').show();
+				}
+			}
+			$( '#logo' ).hide();
+		});
 	</script>
 </head>
-<body onload="init()">
-	<center><img src="icon_128.png" /></center>
-	<div id="servers">
-		server 1<br/>
-		server 2<br/>
-		server 3<br/>
-		server 4<br/>
-		server 5<br/>
-		server 6<br/>
+<body> 
+	<div id="notification"></div>
+	<center><img id="logo" src="icon_128.png" /></center>
+	<div id="player">
+		
 	</div>
-	<div id="add_servers">
+	<div id="artists">
+		
+	</div>
+	<div id="albums">
+		
+	</div>
+	<div id="songs">
+		
+	</div>
+	<div id="servers">
+	</div>
+	<div id="add_server">
 		<table> 
 			<tr>
 				<td>Server Name:</td><td><input id="server" type="text" name="server" value=""></td><td></td>
